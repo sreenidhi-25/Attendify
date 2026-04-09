@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendify - Faculty Portal</title>
+    <!-- Google Fonts: Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <!-- Boxicons for modern icons -->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Slot Selection View (Initial View) -->
+    <div id="slot-selection-view" class="slot-container">
+      <div class="slot-header">
+        <i
+          class="bx bx-calendar-check text-primary"
+          style="font-size: 48px"
+        ></i>
+        <h1>Welcome to Attendify</h1>
+        <p>Please select a class slot to manage attendance</p>
+      </div>
+      <div class="slot-grid">
+        <div class="slot-card" onclick="selectSlot('A1')">
+          <i class="bx bx-book-bookmark"></i>
+          <h3>Class A1</h3>
+          <p>Morning Batch</p>
+        </div>
+        <div class="slot-card" onclick="selectSlot('B1')">
+          <i class="bx bx-laptop"></i>
+          <h3>Class B1</h3>
+          <p>Afternoon Batch</p>
+        </div>
+        <div class="slot-card" onclick="selectSlot('C1')">
+          <i class="bx bx-code-alt"></i>
+          <h3>Class C1</h3>
+          <p>Evening Batch</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+      <div class="sidebar">
+        <div class="logo-details">
+          <i class="bx bx-calendar-check"></i>
+          <span class="logo_name">Attendify</span>
+        </div>
+        <ul class="nav-links">
+          <li>
+            <a href="#" class="active" id="nav-dashboard"
+              ><i class="bx bx-grid-alt"></i
+              ><span class="links_name">Dashboard</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="nav-students"
+              ><i class="bx bx-user"></i
+              ><span class="links_name">Students</span></a
+            >
+          </li>
+          <li>
+            <a href="#" id="nav-mark"
+              ><i class="bx bx-check-square"></i
+              ><span class="links_name">Mark Attendance</span></a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <section class="home-section">
+        <nav>
+          <div class="sidebar-button">
+            <i class="bx bx-menu sidebarBtn"></i>
+            <div
+              class="header-breadcrumbs"
+              style="display: flex; align-items: center"
+            >
+              <a
+                href="#"
+                onclick="switchView('dashboard')"
+                style="
+                  color: var(--text-muted);
+                  text-decoration: none;
+                  transition: color 0.3s;
+                "
+                >Home</a
+              >
+              <i
+                class="bx bx-chevron-right"
+                style="font-size: 18px; margin: 0 5px; color: var(--text-muted)"
+              ></i>
+              <span id="top-nav-title">Dashboard</span>
+            </div>
+            <select
+              class="slot-select"
+              id="slot-dropdown"
+              onchange="changeSlotFromDropdown(this.value)"
+            >
+              <option value="A1">Slot: A1 &#9660;</option>
+              <option value="B1">Slot: B1 &#9660;</option>
+              <option value="C1">Slot: C1 &#9660;</option>
+            </select>
+          </div>
+          <div
+            class="profile-details"
+            style="display: flex; align-items: center; gap: 10px"
+          >
+            <img
+              src="https://ui-avatars.com/api/?name=Faculty&background=4f46e5&color=fff&rounded=true"
+              alt="profile"
+              style="width: 40px; height: 40px; border-radius: 50%"
+            />
+            <span class="admin_name" style="font-weight: 600; font-size: 16px"
+              >Faculty</span
+            >
+          </div>
+        </nav>
+
+        <div class="home-content dashboard-view" id="dashboard-view">
+          <div class="overview-boxes">
+            <div class="box">
+              <div class="right-side">
+                <div class="box-topic">Class Average</div>
+                <div class="number" id="class-average">--%</div>
+                <div class="indicator">
+                  <i class="bx bx-bar-chart-alt-2"></i>
+                  <span class="text">Overall Attendance</span>
+                </div>
+              </div>
+              <i class="bx bx-stats cart"></i>
+            </div>
+            <div class="box">
+              <div class="right-side">
+                <div class="box-topic">Total Students</div>
+                <div class="number" id="total-students">--</div>
+                <div class="indicator">
+                  <i class="bx bx-group"></i>
+                  <span class="text">Enrolled</span>
+                </div>
+              </div>
+              <i class="bx bx-user-pin cart two"></i>
+            </div>
+            <div class="box">
+              <div class="right-side">
+                <div class="box-topic">Shortage Alert (<75%)</div>
+                <div class="number text-danger" id="shortage-count">--</div>
+                <div class="indicator">
+                  <i class="bx bx-error-alt text-danger"></i>
+                  <span class="text">Critical Status</span>
+                </div>
+              </div>
+              <i class="bx bx-bell alert-icon text-danger cart three"></i>
+            </div>
+          </div>
+
+          <!-- Quick Filters -->
+          <div class="quick-filters">
+            <button class="pill-btn active" data-filter="all">
+              All Students
+            </button>
+            <button class="pill-btn danger" data-filter="below75">
+              Below 75%
+            </button>
+            <button class="pill-btn warning" data-filter="atRisk">
+              At Risk (75-80%)
+            </button>
+            <button class="pill-btn success" data-filter="top">
+              Top Attenders
+            </button>
+          </div>
+
+          <div class="list-boxes" style="margin-top: 20px">
+            <div class="recent-sales box">
+              <div class="title" id="filter-title">Class Roster Overview</div>
+              <div class="shortage-list list-header" id="dash-student-list">
+                <!-- Loaded dynamically based on filter -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mark Attendance View -->
+        <div class="home-content mark-view hidden" id="mark-view">
+          <div class="box full-width">
+            <div class="title-bar" style="margin-bottom: 20px">
+              <div style="display: flex; align-items: center; gap: 15px">
+                <div class="title" style="margin-bottom: 0">
+                  Mark Attendance
+                </div>
+                <div
+                  id="live-stats-pill"
+                  style="
+                    background: var(--panel-bg);
+                    border: 1px solid var(--border);
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    display: none;
+                  "
+                >
+                  <span style="color: var(--success); font-weight: 600"
+                    >P: <span id="stat-present">0</span></span
+                  ><span style="margin: 0 8px">|</span>
+                  <span style="color: var(--danger); font-weight: 600"
+                    >A: <span id="stat-absent">0</span></span
+                  ><span style="margin: 0 8px">|</span>
+                  <span>Total: <span id="stat-total">0</span></span>
+                </div>
+              </div>
+              <input
+                type="date"
+                id="attendance-date"
+                class="date-picker"
+                style="width: 200px"
+              />
+            </div>
+            <div class="attendance-table" id="attendance-form-list">
+              <div class="list-row header">
+                <span>Reg No</span>
+                <span>Name</span>
+                <span>Status (P/A)</span>
+              </div>
+              <!-- Interactive rows added dynamically -->
+            </div>
+            <div
+              class="action-footer"
+              style="margin-top: 20px; text-align: right"
+            >
+              <button class="btn btn-primary" id="save-attendance-btn">
+                Save Attendance
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students View -->
+        <div class="home-content students-view hidden" id="students-view">
+          <div class="box full-width">
+            <div class="title-bar">
+              <div class="title">Student Registry</div>
+              <button class="btn btn-primary" id="open-add-modal">
+                <i class="bx bx-plus"></i> Add Student
+              </button>
+            </div>
+            <div class="student-table" id="all-students-list">
+              <div class="list-row header">
+                <span>Reg No</span>
+                <span>Name</span>
+                <span>Percentage</span>
+                <span>Action</span>
+              </div>
+              <!-- Students dynamically added -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Add Modal -->
+    <div class="modal overlay hidden" id="add-modal">
+      <div class="modal-content">
+        <h3>Add New Student</h3>
+        <p
+          style="margin-bottom: 15px; color: var(--text-muted); font-size: 14px"
+          id="add-modal-slot-desc"
+        >
+          Slot context
+        </p>
+        <div class="form-group">
+          <label>Registration Number</label>
+          <input type="text" id="new-regno" placeholder="e.g. CS21001" />
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="new-name" placeholder="e.g. John Doe" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="close-modal">Cancel</button>
+          <button class="btn btn-primary" id="save-student">Add Student</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div class="modal overlay hidden" id="detail-modal">
+      <div class="modal-content detail-content">
+        <h3>Student Attendance Summary</h3>
+        <div
+          class="student-info"
+          id="detail-info"
+          style="margin-top: 10px; color: var(--text-muted); line-height: 1.6"
+        >
+          <!-- Details Go Here -->
+        </div>
+        <div class="calendar-heat" id="detail-calendar">
+          <!-- P/A blocks -->
+        </div>
+        <div class="modal-actions mt-4">
+          <button class="btn btn-secondary" id="close-detail-modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="attendance.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
